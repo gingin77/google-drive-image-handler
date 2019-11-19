@@ -1,0 +1,15 @@
+{
+  "name": "image-processor",
+  "version": "1.0.0",
+  "description": "Some utilities for resizing images",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ginnie Hench",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "googleapis": "^39.2.0"
+  }
+}

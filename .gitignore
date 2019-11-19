@@ -1,0 +1,4 @@
+credentials_google.json
+node_modules/
+.env
+scratch/
