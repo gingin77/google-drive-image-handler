@@ -1,15 +1,6 @@
-require("dotenv").config();
-const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-const { google } = require("googleapis");
-const scope = ["https://www.googleapis.com/auth/drive"];
-const auth = new google.auth.JWT(
-  keys.client_email,
-  null,
-  keys.private_key,
-  scope,
-  null
-);
-const drive = google.drive({ version: "v3", auth });
+const { googleDriveService } = require("./client");
+
+const drive = googleDriveService();
 
 function listFiles(optionParams) {
   return new Promise(resolve => {
