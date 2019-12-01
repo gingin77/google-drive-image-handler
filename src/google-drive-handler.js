@@ -42,7 +42,9 @@ class GoogleDriveHandler {
       return listResult;
     } else {
       let downloads = await this.downloadResults(result);
-      let complete = downloads.every(item => item == "Success!") && (downloads.length == result.length)
+      let complete =
+        downloads.every(item => item == "Success!") &&
+        downloads.length == result.length;
       listResult = Object.assign({}, listResult, {
         downloads_complete: complete
       });
@@ -95,13 +97,22 @@ class GoogleDriveHandler {
 
   async downloadResults(result) {
     let downloadPromises = result.map(item => {
-      let gdd = new GoogleDriveDownloader(this.drive, item, this.processImage);
+      let process = this.filterImages(item) && this.processImage;
+
+      let gdd = new GoogleDriveDownloader(this.drive, item, process);
       return gdd.fileDownload();
     });
 
     return Promise.all(downloadPromises).then(results => {
       return results;
     });
+  }
+
+  filterImages(item) {
+    let re = /image\/jpeg|image\/png/;
+    if (item.mimeType.match(re)) {
+      return true;
+    }
   }
 }
 
