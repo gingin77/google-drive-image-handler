@@ -24,13 +24,6 @@ class GoogleDriveHandler {
     return new QueryBuilder(inputArguments);
   }
 
-  async drivefiles(optParams = null) {
-    optParams = !optParams ? this.optParams : optParams;
-    let dq = new GoogleDriveRequester(optParams, this.drive);
-
-    return await dq.filesList;
-  }
-
   async queryHandler() {
     let result = await this.getQueryResults();
     let count = result.length;
@@ -51,13 +44,11 @@ class GoogleDriveHandler {
     return result;
   }
 
-  getArgumentsFromResponse(parentResult, localDepth) {
-    let responseHandler = new ResponseHandler(
-      parentResult,
-      localDepth,
-      this.itemCount
-    );
-    return responseHandler.argumentsForNextDriveRequest;
+  async drivefiles(optParams = null) {
+    optParams = !optParams ? this.optParams : optParams;
+    let dq = new GoogleDriveRequester(optParams, this.drive);
+
+    return await dq.filesList;
   }
 
   async getChildContents(parentResult) {
@@ -74,6 +65,15 @@ class GoogleDriveHandler {
     }
 
     return parentResult;
+  }
+
+  getArgumentsFromResponse(parentResult, localDepth) {
+    let responseHandler = new ResponseHandler(
+      parentResult,
+      localDepth,
+      this.itemCount
+    );
+    return responseHandler.argumentsForNextDriveRequest;
   }
 }
 
