@@ -12,7 +12,8 @@ class QueryBuilder {
     entityType,
     subdirectoryDepth,
     searchBoolean,
-    itemCount
+    itemCount,
+    download
   }) {
     this.pageSize = pageSize;
     this.key = key;
@@ -21,6 +22,7 @@ class QueryBuilder {
     this.subdirectoryDepth = subdirectoryDepth;
     this.searchBoolean = searchBoolean;
     this.itemCount = itemCount;
+    this.download = download;
     this.fields = "nextPageToken, files(id, name, mimeType)";
   }
   get queryString() {
@@ -92,7 +94,8 @@ class QueryBuilder {
     return {
       optParams: this.optParams,
       depth: this.subdirectoryDepth,
-      itemCount: this.itemCount
+      itemCount: this.itemCount,
+      download: this.download
     };
   }
 }

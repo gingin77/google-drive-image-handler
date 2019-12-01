@@ -45,7 +45,46 @@ describe("GoogleDriveHandler", () => {
         );
         const data = await googleDriveHandler.queryHandler();
 
+        expect(data.count).to.eql(2);
         expect(data.result).to.have.lengthOf(2);
+      });
+    });
+  });
+
+  describe("allows download option", () => {
+    context("when download: true is passed in arguments" , () => {
+      let googleDriveHandler = getNewGoogleDriveHandler(
+        i.downloadTrue,
+        drive
+      );
+      it("records that results have been downloaded", async () => {
+        const data = await googleDriveHandler.queryHandler();
+
+        expect(data.downloads_complete).to.be.true;
+      })
+    })
+
+    context("when download flag is NOT passed in arguments", () => {
+      let googleDriveHandler = getNewGoogleDriveHandler(
+        i.singleDirectoryDepthTwoItemCountTwo,
+        drive
+      );
+      it("indicates false for downloads_complete", async () => {
+        const data = await googleDriveHandler.queryHandler();
+
+        expect(data.downloads_complete).to.be.false;
+      });
+    });
+
+    context("when download: false is passed in arguments", () => {
+      let googleDriveHandler = getNewGoogleDriveHandler(
+        i.downloadFalse,
+        drive
+      );
+      it("indicates false for downloads_complete", async () => {
+        const data = await googleDriveHandler.queryHandler();
+
+        expect(data.downloads_complete).to.be.false;
       });
     });
   });

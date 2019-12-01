@@ -5,7 +5,8 @@ let folder_queryArguments = {
   value: "alpha-numeric-folder_id",
   entityType: "directory",
   subdirectoryDepth: 2,
-  itemCount: 2
+  itemCount: 2,
+  download: true
 };
 
 module.exports = folder_queryArguments;

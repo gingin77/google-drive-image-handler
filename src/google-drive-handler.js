@@ -1,7 +1,9 @@
 const qb = require("./query-builder"),
   QueryBuilder = qb.QueryBuilder,
   dq = require("./google-drive-requester"),
-  GoogleDriveRequester = dq.GoogleDriveRequester,
+  GoogleDriveListRequester = dq.GoogleDriveListRequester,
+  dd = require("./google-drive-downloader"),
+  GoogleDriveDownloader = dd.GoogleDriveDownloader,
   rh = require("./response-handler"),
   ResponseHandler = rh.ResponseHandler;
 
@@ -11,12 +13,13 @@ class GoogleDriveHandler {
    */
   constructor(inputArguments, drive) {
     let queryObject = this.newQueryBuilder(inputArguments).queryObject;
-    let { optParams, depth, itemCount } = queryObject;
+    let { optParams, depth, itemCount, download } = queryObject;
 
     this.drive = drive;
     this.optParams = optParams;
-    this.itemCount = itemCount;
     this.depth = depth;
+    this.itemCount = itemCount;
+    this.download = download;
     this.inputArguments = inputArguments;
   }
 
@@ -28,10 +31,23 @@ class GoogleDriveHandler {
     let result = await this.getQueryResults();
     let count = result.length;
 
-    return {
+    let listResult = {
       result: result,
-      count: count
+      count: count,
+      downloads_complete: false
     };
+
+    if (!this.download) {
+      return listResult;
+    } else {
+      let downloads = await this.downloadResults(result);
+      let complete = downloads.every(item => item == "Success!") && (downloads.length == result.length)
+      listResult = Object.assign({}, listResult, {
+        downloads_complete: complete
+      });
+
+      return listResult;
+    }
   }
 
   async getQueryResults() {
@@ -46,9 +62,9 @@ class GoogleDriveHandler {
 
   async drivefiles(optParams = null) {
     optParams = !optParams ? this.optParams : optParams;
-    let dq = new GoogleDriveRequester(optParams, this.drive);
+    let gdlr = new GoogleDriveListRequester(optParams, this.drive);
 
-    return await dq.filesList;
+    return await gdlr.filesList;
   }
 
   async getChildContents(parentResult) {
@@ -75,8 +91,27 @@ class GoogleDriveHandler {
     );
     return responseHandler.argumentsForNextDriveRequest;
   }
+
+  async downloadResults(result) {
+    let downloadPromises = result.map(item => {
+      let gdd = new GoogleDriveDownloader(this.drive, item);
+      return gdd.fileDownload;
+    });
+
+    return Promise.all(downloadPromises).then(results => {
+      return results;
+    });
+  }
 }
 
 module.exports = {
   GoogleDriveHandler: GoogleDriveHandler
 };
+
+const gds = require("./google-drive-client"),
+  driveClient = new gds.GoogleDriveClient(),
+  drive = driveClient.drive(),
+  inputArguments = require("../scratch/queryArguments"),
+  googleDriveHandler = new GoogleDriveHandler(inputArguments, drive);
+
+googleDriveHandler.queryHandler()
