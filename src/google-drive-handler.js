@@ -13,13 +13,14 @@ class GoogleDriveHandler {
    */
   constructor(inputArguments, drive) {
     let queryObject = this.newQueryBuilder(inputArguments).queryObject;
-    let { optParams, depth, itemCount, download } = queryObject;
+    let { optParams, depth, itemCount, download, processImage } = queryObject;
 
     this.drive = drive;
     this.optParams = optParams;
     this.depth = depth;
     this.itemCount = itemCount;
     this.download = download;
+    this.processImage = processImage;
     this.inputArguments = inputArguments;
   }
 
@@ -94,8 +95,8 @@ class GoogleDriveHandler {
 
   async downloadResults(result) {
     let downloadPromises = result.map(item => {
-      let gdd = new GoogleDriveDownloader(this.drive, item);
-      return gdd.fileDownload;
+      let gdd = new GoogleDriveDownloader(this.drive, item, this.processImage);
+      return gdd.fileDownload();
     });
 
     return Promise.all(downloadPromises).then(results => {
@@ -114,4 +115,4 @@ const gds = require("./google-drive-client"),
   inputArguments = require("../scratch/queryArguments"),
   googleDriveHandler = new GoogleDriveHandler(inputArguments, drive);
 
-googleDriveHandler.queryHandler()
+googleDriveHandler.queryHandler().then(console.log);

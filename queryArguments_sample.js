@@ -6,7 +6,8 @@ let folder_queryArguments = {
   entityType: "directory",
   subdirectoryDepth: 2,
   itemCount: 2,
-  download: true
+  download: true,
+  processImage: true
 };
 
 module.exports = folder_queryArguments;

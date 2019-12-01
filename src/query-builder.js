@@ -13,7 +13,8 @@ class QueryBuilder {
     subdirectoryDepth,
     searchBoolean,
     itemCount,
-    download
+    download,
+    processImage
   }) {
     this.pageSize = pageSize;
     this.key = key;
@@ -23,8 +24,8 @@ class QueryBuilder {
     this.searchBoolean = searchBoolean;
     this.itemCount = itemCount;
     this.download = download;
-    this.fields =
-      "nextPageToken, files(id, name, description, mimeType)";
+    this.processImage = processImage;
+    this.fields = "nextPageToken, files(id, name, description, mimeType)";
   }
   get queryString() {
     let id_query = this.key === "id";
@@ -96,7 +97,8 @@ class QueryBuilder {
       optParams: this.optParams,
       depth: this.subdirectoryDepth,
       itemCount: this.itemCount,
-      download: this.download
+      download: this.download,
+      processImage: this.processImage
     };
   }
 }

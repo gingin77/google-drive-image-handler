@@ -6,10 +6,10 @@ const fs = require("fs"),
   drive = driveClient.drive();
 
 class GoogleDriveDownloader {
-  constructor(drive, responseObject, imageCompress) {
+  constructor(drive, responseObject, processImage) {
     this.drive = drive;
     this.responseObject = responseObject;
-    this.imageCompress = imageCompress;
+    this.processImage = processImage;
   }
 
   fileDownload() {
@@ -31,7 +31,7 @@ class GoogleDriveDownloader {
                 console.log("\nDone downloading file.\n");
                 resolve(filePath);
                 outerResolve("Success!");
-                if(this.imageCompress) {
+                if(this.processImage) {
                   this.fileCompress(filePath);
                 }
               })
