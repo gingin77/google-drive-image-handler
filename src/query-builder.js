@@ -23,7 +23,8 @@ class QueryBuilder {
     this.searchBoolean = searchBoolean;
     this.itemCount = itemCount;
     this.download = download;
-    this.fields = "nextPageToken, files(id, name, mimeType)";
+    this.fields =
+      "nextPageToken, files(id, name, description, mimeType)";
   }
   get queryString() {
     let id_query = this.key === "id";
