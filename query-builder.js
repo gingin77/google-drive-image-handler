@@ -27,9 +27,9 @@ class QueryBuilder {
   }
 
   handleValue() {
-    if (typeof this.value == "string") {
+    if (typeof this.value === "string") {
       return this.processStringValue();
-    } else if (typeof this.value == "array") {
+    } else if (Array.isArray(this.value)) {
       return this.value;
     }
   }
