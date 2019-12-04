@@ -1,17 +1,23 @@
-const { googleDriveService } = require("./client");
-const drive = googleDriveService();
+class DriveQuery {
+  constructor(optParams, drive) {
+    this.optParams = optParams;
+    this.drive = drive;
+  }
 
-function listFiles(optionParams) {
-  return new Promise(resolve => {
-    drive.files.list(optionParams, (listErr, res) => {
-      if (listErr) {
-        console.log(listErr);
-        return;
-      } else {
-        resolve(res.data.files);
-      }
+  get filesList() {
+    return new Promise(resolve => {
+      this.drive.files.list(this.optParams, (listErr, res) => {
+        if (listErr) {
+          console.log(listErr);
+          return;
+        } else {
+          resolve(res.data.files);
+        }
+      });
     });
-  });
+  }
 }
 
-module.exports = { listFiles };
+module.exports = { 
+  DriveQuery: DriveQuery 
+};
