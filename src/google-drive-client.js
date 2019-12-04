@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
-class GoogleDriveService {
+class GoogleDriveClient {
   constructor() {
     this.keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
     this.scope = ["https://www.googleapis.com/auth/drive"];
@@ -30,4 +30,4 @@ class GoogleDriveService {
 }
 
 
-module.exports = { GoogleDriveService: GoogleDriveService };
+module.exports = { GoogleDriveClient: GoogleDriveClient };

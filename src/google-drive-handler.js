@@ -1,7 +1,7 @@
 const qb = require("./query-builder"),
   QueryBuilder = qb.QueryBuilder,
-  dq = require("./queries"),
-  DriveQuery = dq.DriveQuery,
+  dq = require("./google-drive-requester"),
+  GoogleDriveRequester = dq.GoogleDriveRequester,
   rh = require("./response-handler"),
   ResponseHandler = rh.ResponseHandler;
 
@@ -25,7 +25,7 @@ class GoogleDriveHandler {
 
   async drivefiles(optParams = null) {
     optParams = !optParams ? this.optParams : optParams;
-    let dq = new DriveQuery(optParams, this.drive);
+    let dq = new GoogleDriveRequester(optParams, this.drive);
 
     return await dq.filesList;
   }

@@ -1,6 +1,6 @@
 const chai = require("chai"),
   expect = chai.expect,
-  nQb = require("../../response-handler"),
+  nQb = require("../../src/response-handler"),
   ResponseHandler = nQb.ResponseHandler,
   { responeInput } = require("../fixtures/response-handler.js");
 

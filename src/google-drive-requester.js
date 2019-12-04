@@ -1,4 +1,4 @@
-class DriveQuery {
+class GoogleDriveRequester {
   constructor(optParams, drive) {
     this.optParams = optParams;
     this.drive = drive;
@@ -19,5 +19,5 @@ class DriveQuery {
 }
 
 module.exports = { 
-  DriveQuery: DriveQuery 
+  GoogleDriveRequester: GoogleDriveRequester 
 };

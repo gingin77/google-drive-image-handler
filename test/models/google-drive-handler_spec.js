@@ -1,9 +1,9 @@
 const chai = require("chai"),
   expect = chai.expect,
-  gds = require("../../client"),
-  driveService = new gds.GoogleDriveService(),
-  drive = driveService.drive(),
-  gdh = require("../../google-drive-handler"),
+  gdc = require("../../src/google-drive-client"),
+  driveClient = new gdc.GoogleDriveClient(),
+  drive = driveClient.drive(),
+  gdh = require("../../src/google-drive-handler"),
   GoogleDriveHandler = gdh.GoogleDriveHandler,
   { i, o } = require("../fixtures/google-drive-handler.js");
 
