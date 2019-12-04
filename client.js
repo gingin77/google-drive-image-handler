@@ -12,7 +12,7 @@ function googleDriveService() {
     null
   );
   
-  return google.drive({ version: "v3", auth });
+  return google.drive({ version: "v3", auth, timeout: 1000 });
 }
 
 module.exports = { googleDriveService };
