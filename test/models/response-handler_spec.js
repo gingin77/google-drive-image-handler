@@ -2,15 +2,15 @@ const chai = require("chai"),
   expect = chai.expect,
   nQb = require("../../src/response-handler"),
   ResponseHandler = nQb.ResponseHandler,
-  { responeInput } = require("../fixtures/response-handler.js");
+  { responseInput } = require("../fixtures/response-handler.js");
 
 function init(parent, depth) {
   return new ResponseHandler(parent, depth);
 }
 
 describe("ResponseHandler", () => {
-  let responseHandler = init(responeInput, 1);
-  let idsFromInputResult = responeInput.map(obj => obj.id);
+  let responseHandler = init(responseInput, 1);
+  let idsFromInputResult = responseInput.map(obj => obj.id);
 
   describe("Result Ids", () => {
     it("should be an array", () => {
@@ -22,11 +22,11 @@ describe("ResponseHandler", () => {
       );
     });
 
-    let idsFolderMimeType = responeInput
+    let idsFolderMimeType = responseInput
       .filter(obj => obj.mimeType === "application/vnd.google-apps.folder")
       .map(obj => obj.id);
 
-    let idsForImageMimeType = responeInput
+    let idsForImageMimeType = responseInput
       .filter(obj => obj.mimeType === "image/jpeg")
       .map(obj => obj.id);
     
@@ -42,7 +42,7 @@ describe("ResponseHandler", () => {
     });
 
     context("when depth argument is 2", () => {
-      let responseHandler = init(responeInput, 2);
+      let responseHandler = init(responseInput, 2);
       
       it("should only include ids with the folder mime/Type", () => {
         expect(responseHandler.idsFromRequest).to.include.members(
