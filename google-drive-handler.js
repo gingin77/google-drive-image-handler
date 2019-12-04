@@ -1,9 +1,9 @@
-const qb              = require("./query-builder");
-const QueryBuilder    = qb.QueryBuilder;
-const dq = require("./queries");
-const DriveQuery = dq.DriveQuery;
-const rh             = require("./response-handler")
-const ResponseHandler = rh.ResponseHandler;
+const qb = require("./query-builder"),
+  QueryBuilder = qb.QueryBuilder,
+  dq = require("./queries"),
+  DriveQuery = dq.DriveQuery,
+  rh = require("./response-handler"),
+  ResponseHandler = rh.ResponseHandler;
 
 class GoogleDriveHandler {
   /**
@@ -61,7 +61,7 @@ class GoogleDriveHandler {
       nextOptParams;
 
     while (localDepth > 1) {
-      nextArguments = this.getArgumentsFromResponse(parentResult,localDepth);
+      nextArguments = this.getArgumentsFromResponse(parentResult, localDepth);
       nextOptParams = this.newQueryBuilder(nextArguments).optParams;
 
       parentResult = await this.drivefiles(nextOptParams);
@@ -72,12 +72,12 @@ class GoogleDriveHandler {
   }
 }
 
-const { googleDriveService } = require("./client");
-const drive = googleDriveService();
-const inputArguments = require("./scratch/queryArguments");
-let googleDriveHandler = new GoogleDriveHandler(inputArguments, drive);
-googleDriveHandler.queryHandler()
-  .then(console.log);
+const { googleDriveService } = require("./client"),
+  drive = googleDriveService(),
+  inputArguments = require("./scratch/queryArguments"),
+  googleDriveHandler = new GoogleDriveHandler(inputArguments, drive);
+
+googleDriveHandler.queryHandler().then(console.log);
 
 module.exports = {
   GoogleDriveHandler: GoogleDriveHandler
