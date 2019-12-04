@@ -14,9 +14,12 @@ class QueryBuilder {
 
   get queryString() {
     let id_query = this.key === "id";
-    let { fileIds, fileIdCount } = this.handleValue();
+    
+    let fileIds     = this.handleValue();
+    let fileIdCount = fileIds.length;
+    
     let singleEntity = fileIdCount === 1;
-    let directory = this.entityType === "directory";
+    let directory    = this.entityType === "directory";
 
     if (id_query && singleEntity && directory && this.subdirectoryDepth == 1) {
       return this.buildSingleDirectoryContentOptions(fileIds[0]);
@@ -24,25 +27,21 @@ class QueryBuilder {
   }
 
   handleValue() {
-    let fileIds, fileIdCount;
-
     if (typeof this.value == "string") {
-      let input = this.value;
-      let inputSplit = input.split(",");
-      fileIdCount = inputSplit.length;
-      if (fileIdCount > 1) {
-        inputSplit.map(s => s.trim());
-      }
-      fileIds = inputSplit;
+      return this.processStringValue();
     } else if (typeof this.value == "array") {
-      fileIds = this.value;
-      fileIdCount = this.fileIdInput.length;
+      return this.value;
+    }
+  }
+
+  processStringValue() {
+    let inputSplit = this.value.split(",");
+
+    if (inputSplit.length > 1) {
+      inputSplit = inputSplit.map(s => s.trim());
     }
 
-    return {
-      fileIds:     fileIds,
-      fileIdCount: fileIdCount
-    };
+    return inputSplit;
   }
 
   buildSingleDirectoryContentOptions(fileId) {

@@ -4,12 +4,16 @@
   "description": "Some utilities for resizing images",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/**/*.js"
   },
   "author": "Ginnie Hench",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
     "googleapis": "^39.2.0"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
   }
 }
