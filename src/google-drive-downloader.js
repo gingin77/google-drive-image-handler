@@ -1,9 +1,7 @@
 const fs = require("fs"),
   path = require("path"),
-  sharp = require("sharp"),
-  gds = require("./google-drive-client"),
-  driveClient = new gds.GoogleDriveClient(),
-  drive = driveClient.drive();
+  ip = require("./image-processor"),
+  ImageProcessor = ip.ImageProcessor;
 
 class GoogleDriveDownloader {
   constructor(drive, responseObject, processImage) {
@@ -14,6 +12,7 @@ class GoogleDriveDownloader {
 
   fileDownload() {
     let drive = this.drive;
+    let responseObject = this.responseObject;
     let { id, name } = this.responseObject;
     
     let download = new Promise(outerResolve => {
@@ -28,12 +27,14 @@ class GoogleDriveDownloader {
 
             res.data
               .on("end", () => {
+                console.log("\n");
                 console.log("\nDone downloading file.\n");
+                if (this.processImage) {
+                  let ip = new ImageProcessor(responseObject, filePath);
+                  ip.processImage();
+                }
                 resolve(filePath);
                 outerResolve("Success!");
-                if(this.processImage) {
-                  this.fileCompress(filePath);
-                }
               })
               .on("error", err => {
                 console.error("Error downloading file.\n");
@@ -53,30 +54,6 @@ class GoogleDriveDownloader {
     });
 
     return download;
-  }
-
-  fileCompress() {
-    const { id, name } = this.responseObject;
-    const filePath = path.join("./tmp", name);
-    let readStream = fs.createReadStream(filePath);
-    const outputPath = path.join("./tmp/resized", name);
-    const writeStream = fs.createWriteStream(outputPath);
-
-    const pipeline = sharp()
-      .rotate()
-      .resize(200, 200)
-      .toBuffer(function(err, outputBuffer, info) {
-        // outputBuffer contains 200px high JPEG image data,
-        // auto-rotated using EXIF Orientation tag
-        // info.width and info.height contain the dimensions of the resized image
-      });
-      // .metadata()
-      // .then(metadata => {
-      //   console.log("metadata");
-      //   console.log(metadata);
-      // });
-
-    readStream.pipe(pipeline).pipe(writeStream);
   }
 }
 

@@ -97,22 +97,13 @@ class GoogleDriveHandler {
 
   async downloadResults(result) {
     let downloadPromises = result.map(item => {
-      let process = this.filterImages(item) && this.processImage;
-
-      let gdd = new GoogleDriveDownloader(this.drive, item, process);
+      let gdd = new GoogleDriveDownloader(this.drive, item, this.processImage);
       return gdd.fileDownload();
     });
 
     return Promise.all(downloadPromises).then(results => {
       return results;
     });
-  }
-
-  filterImages(item) {
-    let re = /image\/jpeg|image\/png/;
-    if (item.mimeType.match(re)) {
-      return true;
-    }
   }
 }
 
