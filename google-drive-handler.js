@@ -72,14 +72,6 @@ class GoogleDriveHandler {
   }
 }
 
-const gds = require("./client"),
-  driveService = new gds.GoogleDriveService(),
-  drive = driveService.drive(),
-  inputArguments = require("./scratch/queryArguments"),
-  googleDriveHandler = new GoogleDriveHandler(inputArguments, drive);
-
-googleDriveHandler.queryHandler().then(console.log);
-
 module.exports = {
   GoogleDriveHandler: GoogleDriveHandler
 };
