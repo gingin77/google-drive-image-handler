@@ -38,7 +38,20 @@ describe("GoogleDriveHandler", () => {
 
         expect(data.result).to.eql(o.singleDirectoryDepthTwo);
       });
-    })
+    });
+        
+    context("when depth is two, item count is 2, and directory query", () => {
+        it("should return 2 child objects from a subdirectory", async () => {
+          let googleDriveHandler = getNewGoogleDriveHandler(
+            i.singleDirectoryDepthTwoItemCountTwo,
+            drive
+          );
+          const data = await googleDriveHandler.queryHandler();
+
+          expect(data.result).to.have.lengthOf(2);
+        });
+      }
+    );
 
   })
 });

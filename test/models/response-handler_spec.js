@@ -2,10 +2,13 @@ const chai = require("chai"),
   expect = chai.expect,
   nQb = require("../../src/response-handler"),
   ResponseHandler = nQb.ResponseHandler,
-  { responseInput } = require("../fixtures/response-handler.js");
+  {
+    responseInput,
+    itemCountTestResult
+  } = require("../fixtures/response-handler.js");
 
-function init(parent, depth) {
-  return new ResponseHandler(parent, depth);
+function init(parent, depth, itemCount) {
+  return new ResponseHandler(parent, depth, itemCount);
 }
 
 describe("ResponseHandler", () => {
@@ -51,6 +54,15 @@ describe("ResponseHandler", () => {
         expect(responseHandler.idsFromRequest).to.not.include.members(
           idsForImageMimeType
         );
+      });
+    });
+  });
+
+  describe("How itemCount impacts pageSize", ()=> {
+    context("When item count is 2 and subdirectory depth is 2", ()=> {
+      it("should set pageSize to 2 to match input item count", () => {
+        let rh = init(itemCountTestResult, 2, 2);
+        expect(rh.argumentsForNextDriveRequest.pageSize).to.eql(2);
       });
     });
   });

@@ -11,10 +11,11 @@ class GoogleDriveHandler {
    */
   constructor(inputArguments, drive) {
     let queryObject = this.newQueryBuilder(inputArguments).queryObject;
-    let { optParams, depth } = queryObject;
+    let { optParams, depth, itemCount } = queryObject;
 
     this.drive = drive;
     this.optParams = optParams;
+    this.itemCount = itemCount;
     this.depth = depth;
     this.inputArguments = inputArguments;
   }
@@ -51,7 +52,7 @@ class GoogleDriveHandler {
   }
 
   getArgumentsFromResponse(parentResult, localDepth) {
-    let responseHandler = new ResponseHandler(parentResult, localDepth);
+    let responseHandler = new ResponseHandler(parentResult, localDepth, this.itemCount);
     return responseHandler.argumentsForNextDriveRequest;
   }
 

@@ -4,19 +4,20 @@ class QueryBuilder {
   // entityType indicates whether "value" is expected to be a "file" or a "directory"
   // searchBoolean should be passed: "or", "and", OR "not"
   // subdirectoryDepth is ignored if entityType == file
-  constructor({ pageSize, key, value, entityType, subdirectoryDepth, searchBoolean }) {
+  // itemCount is the number of items passed back in list when subdirectory depth is greater than one
+  constructor({ pageSize, key, value, entityType, subdirectoryDepth, searchBoolean, itemCount}) {
     this.pageSize          = pageSize;
     this.key               = key;
     this.value             = value;
     this.entityType        = entityType;
     this.subdirectoryDepth = subdirectoryDepth;
     this.searchBoolean     = searchBoolean;
+    this.itemCount         = itemCount;
     this.fields            = "nextPageToken, files(id, name, mimeType)";
   }
-
   get queryString() {
     let id_query = this.key === "id";
-    
+
     let fileIds     = this.handleValue();
     let fileIdCount = fileIds.length;
 
@@ -30,8 +31,8 @@ class QueryBuilder {
       // A single file
     } else if (singleEntity && !directory && !id_query) {
       return this.buildQueryForFileByName(fileIds[0]);
-    
-    // Multiple directory ids
+
+      // Multiple directory ids
     } else if (id_query && !singleEntity && directory) {
       return this.buildQueryForMultiDirectories(fileIds);
     }
@@ -83,8 +84,9 @@ class QueryBuilder {
   get queryObject() {
     return {
       optParams: this.optParams,
-      depth: this.subdirectoryDepth
-    }
+      depth: this.subdirectoryDepth,
+      itemCount: this.itemCount
+    };
   }
 }
 

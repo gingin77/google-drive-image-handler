@@ -4,8 +4,8 @@ let folder_queryArguments = {
   key: "id",
   value: "alpha-numeric-folder_id",
   entityType: "directory",
-  subdirectoryDepth: 1,
-  fields: "nextPageToken, files(id, name, mimeType)"
+  subdirectoryDepth: 2,
+  itemCount: 2
 };
 
 module.exports = folder_queryArguments;
