@@ -2,13 +2,15 @@ class QueryBuilder {
   // key specifies whether the value is a "name" or "id"
   // value can be a "name" or "id" for a folder or single file; 'value' can accept strings or arrays
   // entityType indicates whether "value" is expected to be a "file" or a "directory"
+  // searchBoolean should be passed: "or", "and", OR "not"
   // subdirectoryDepth is ignored if entityType == file
-  constructor({ pageSize, key, value, entityType, subdirectoryDepth, fields }) {
+  constructor({ pageSize, key, value, entityType, subdirectoryDepth, searchBoolean, fields }) {
     this.pageSize          = pageSize;
     this.key               = key;
     this.value             = value;
     this.entityType        = entityType;
     this.subdirectoryDepth = subdirectoryDepth;
+    this.searchBoolean     = searchBoolean;
     this.fields            = fields;
   }
 
@@ -23,16 +25,29 @@ class QueryBuilder {
 
     // All children one level deep for a directory
     if (id_query && singleEntity && directory && this.subdirectoryDepth == 1) {
-      return this.buildSingleDirectoryContentOptions(fileIds[0]);
+      return this.buildQueryForSingleDirectory(fileIds[0]);
 
-      // A single file
+    // A single file
     } else if (singleEntity && !directory && !id_query) {
       return this.buildQueryForFileByName(fileIds[0]);
+    
+    // Multiple directory ids
+    } else if (id_query && !singleEntity && directory && this.subdirectoryDepth == 1) {
+      return this.buildQueryForMultiDirectories(fileIds);
     }
+
   }
 
-  buildSingleDirectoryContentOptions(fileId) {
+  buildQueryForSingleDirectory(fileId) {
     return `"${fileId}" in parents`;
+  }
+
+  buildQueryForMultiDirectories(fileIds) {
+    return fileIds
+      .map(id => {
+        return this.buildQueryForSingleDirectory(id);
+      })
+      .join(` ${this.searchBoolean} `);
   }
 
   buildQueryForFileByName(fileId) {
