@@ -21,9 +21,22 @@ class QueryBuilder {
     let singleEntity = fileIdCount === 1;
     let directory    = this.entityType === "directory";
 
+    // All children one level deep for a directory
     if (id_query && singleEntity && directory && this.subdirectoryDepth == 1) {
       return this.buildSingleDirectoryContentOptions(fileIds[0]);
+
+      // A single file
+    } else if (singleEntity && !directory && !id_query) {
+      return this.buildQueryForFileByName(fileIds[0]);
     }
+  }
+
+  buildSingleDirectoryContentOptions(fileId) {
+    return `"${fileId}" in parents`;
+  }
+
+  buildQueryForFileByName(fileId) {
+    return `name contains "${fileId}"`;
   }
 
   handleValue() {
@@ -42,10 +55,6 @@ class QueryBuilder {
     }
 
     return inputSplit;
-  }
-
-  buildSingleDirectoryContentOptions(fileId) {
-    return `"${fileId}" in parents`;
   }
 
   get optParams() {
