@@ -8,14 +8,11 @@ const chai = require("chai"),
   { i, o } = require("../fixtures/google-drive-handler.js");
 
 function getNewGoogleDriveHandler(inputArguments, drive) {
-  return new GoogleDriveHandler(
-      inputArguments,
-      drive
-  );
+  return new GoogleDriveHandler(inputArguments, drive);
 }
 
 describe("GoogleDriveHandler", () => {
-  describe("results returned", ()=> {
+  describe("results returned", () => {
     context("when directory query with depth of one", () => {
       it("should return direct child contents, which are usually also folders", async () => {
         let googleDriveHandler = getNewGoogleDriveHandler(
@@ -39,19 +36,17 @@ describe("GoogleDriveHandler", () => {
         expect(data.result).to.eql(o.singleDirectoryDepthTwo);
       });
     });
-        
+
     context("when depth is two, item count is 2, and directory query", () => {
-        it("should return 2 child objects from a subdirectory", async () => {
-          let googleDriveHandler = getNewGoogleDriveHandler(
-            i.singleDirectoryDepthTwoItemCountTwo,
-            drive
-          );
-          const data = await googleDriveHandler.queryHandler();
+      it("should return 2 child objects from a subdirectory", async () => {
+        let googleDriveHandler = getNewGoogleDriveHandler(
+          i.singleDirectoryDepthTwoItemCountTwo,
+          drive
+        );
+        const data = await googleDriveHandler.queryHandler();
 
-          expect(data.result).to.have.lengthOf(2);
-        });
-      }
-    );
-
-  })
+        expect(data.result).to.have.lengthOf(2);
+      });
+    });
+  });
 });

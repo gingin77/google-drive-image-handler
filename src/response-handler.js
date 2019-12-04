@@ -1,5 +1,5 @@
 class ResponseHandler {
-  constructor(result, depth, itemCount ) {
+  constructor(result, depth, itemCount) {
     this.depth = depth;
     this.itemCount = itemCount;
     this.result = result;
@@ -53,7 +53,7 @@ class ResponseHandler {
 
   depthForNextGoogleDriveRequest() {
     let currentDepth = this.depth;
-    
+
     return --currentDepth;
   }
 
@@ -86,14 +86,15 @@ class ResponseHandler {
   getMediaFileObjectsFromResult(result) {
     // define regex for video and image formats
     let re = /video\/(\w*)|image\/(\w*)/;
-    
-    return Array.from(result
-      .map(item => {
-        if (item.mimeType.match(re)) {
-          return item;
-        }
-      })
-      .filter(item => !!item)
+
+    return Array.from(
+      result
+        .map(item => {
+          if (item.mimeType.match(re)) {
+            return item;
+          }
+        })
+        .filter(item => !!item)
     );
   }
 }

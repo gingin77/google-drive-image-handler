@@ -52,7 +52,11 @@ class GoogleDriveHandler {
   }
 
   getArgumentsFromResponse(parentResult, localDepth) {
-    let responseHandler = new ResponseHandler(parentResult, localDepth, this.itemCount);
+    let responseHandler = new ResponseHandler(
+      parentResult,
+      localDepth,
+      this.itemCount
+    );
     return responseHandler.argumentsForNextDriveRequest;
   }
 

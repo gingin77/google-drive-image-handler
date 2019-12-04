@@ -24,10 +24,9 @@ class GoogleDriveClient {
 
   drive() {
     const options = this.driveOptions();
-    
+
     return google.drive(options);
   }
 }
-
 
 module.exports = { GoogleDriveClient: GoogleDriveClient };

@@ -32,7 +32,7 @@ describe("ResponseHandler", () => {
     let idsForImageMimeType = responseInput
       .filter(obj => obj.mimeType === "image/jpeg")
       .map(obj => obj.id);
-    
+
     context("when depth argument is 1", () => {
       it("should not include ids with the folder mime/Type", () => {
         expect(responseHandler.idsFromRequest).to.include.members(
@@ -46,7 +46,7 @@ describe("ResponseHandler", () => {
 
     context("when depth argument is 2", () => {
       let responseHandler = init(responseInput, 2);
-      
+
       it("should only include ids with the folder mime/Type", () => {
         expect(responseHandler.idsFromRequest).to.include.members(
           idsFolderMimeType
@@ -58,8 +58,8 @@ describe("ResponseHandler", () => {
     });
   });
 
-  describe("How itemCount impacts pageSize", ()=> {
-    context("When item count is 2 and subdirectory depth is 2", ()=> {
+  describe("How itemCount impacts pageSize", () => {
+    context("When item count is 2 and subdirectory depth is 2", () => {
       it("should set pageSize to 2 to match input item count", () => {
         let rh = init(itemCountTestResult, 2, 2);
         expect(rh.argumentsForNextDriveRequest.pageSize).to.eql(2);

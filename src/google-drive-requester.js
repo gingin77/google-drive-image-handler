@@ -18,6 +18,6 @@ class GoogleDriveRequester {
   }
 }
 
-module.exports = { 
-  GoogleDriveRequester: GoogleDriveRequester 
+module.exports = {
+  GoogleDriveRequester: GoogleDriveRequester
 };

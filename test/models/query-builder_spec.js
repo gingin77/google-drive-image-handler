@@ -10,8 +10,8 @@ function init(queryArguments) {
 
   return {
     processedValue: query.handleValue(),
-    inputValue:     queryArguments.value,
-    query:          query
+    inputValue: queryArguments.value,
+    query: query
   };
 }
 
@@ -91,10 +91,7 @@ describe("QueryBuilder", () => {
       let keysInQueryObject = Object.keys(queryObject);
 
       it("includes keys that allow definition of a nested query", () => {
-        expect(keysInQueryObject).to.include.members([
-          "optParams",
-          "depth"
-        ]);
+        expect(keysInQueryObject).to.include.members(["optParams", "depth"]);
       });
       it("has values that define a nested query", () => {
         expect(queryObject.depth).to.be.greaterThan(1);
