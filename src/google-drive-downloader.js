@@ -1,18 +1,21 @@
 const fs = require("fs"),
-  path = require('path'),
+  path = require("path"),
+  sharp = require("sharp"),
   gds = require("./google-drive-client"),
   driveClient = new gds.GoogleDriveClient(),
   drive = driveClient.drive();
 
 class GoogleDriveDownloader {
-  constructor(drive, responseObject) {
+  constructor(drive, responseObject, imageCompress) {
     this.drive = drive;
     this.responseObject = responseObject;
+    this.imageCompress = imageCompress;
   }
 
-  get fileDownload() {
+  fileDownload() {
     let drive = this.drive;
     let { id, name } = this.responseObject;
+    
     let download = new Promise(outerResolve => {
       drive.files
         .get({ fileId: id, alt: "media" }, { responseType: "stream" })
@@ -28,6 +31,9 @@ class GoogleDriveDownloader {
                 console.log("\nDone downloading file.\n");
                 resolve(filePath);
                 outerResolve("Success!");
+                if(this.imageCompress) {
+                  this.fileCompress(filePath);
+                }
               })
               .on("error", err => {
                 console.error("Error downloading file.\n");
@@ -42,11 +48,35 @@ class GoogleDriveDownloader {
                 }
               })
               .pipe(dest);
-          })
-        })
+          });
+        });
     });
 
     return download;
+  }
+
+  fileCompress() {
+    const { id, name } = this.responseObject;
+    const filePath = path.join("./tmp", name);
+    let readStream = fs.createReadStream(filePath);
+    const outputPath = path.join("./tmp/resized", name);
+    const writeStream = fs.createWriteStream(outputPath);
+
+    const pipeline = sharp()
+      .rotate()
+      .resize(200, 200)
+      .toBuffer(function(err, outputBuffer, info) {
+        // outputBuffer contains 200px high JPEG image data,
+        // auto-rotated using EXIF Orientation tag
+        // info.width and info.height contain the dimensions of the resized image
+      });
+      // .metadata()
+      // .then(metadata => {
+      //   console.log("metadata");
+      //   console.log(metadata);
+      // });
+
+    readStream.pipe(pipeline).pipe(writeStream);
   }
 }
 
