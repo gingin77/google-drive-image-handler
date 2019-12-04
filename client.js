@@ -1,18 +1,33 @@
 require("dotenv").config();
+const { google } = require("googleapis");
 
-function googleDriveService() {
-  const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-  const { google } = require("googleapis");
-  const scope = ["https://www.googleapis.com/auth/drive"];
-  const auth = new google.auth.JWT(
-    keys.client_email,
-    null,
-    keys.private_key,
-    scope,
-    null
-  );
-  
-  return google.drive({ version: "v3", auth, timeout: 1000 });
+class GoogleDriveService {
+  constructor() {
+    this.keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+    this.scope = ["https://www.googleapis.com/auth/drive"];
+  }
+
+  auth() {
+    return new google.auth.JWT(
+      this.keys.client_email,
+      null,
+      this.keys.private_key,
+      this.scope,
+      null
+    );
+  }
+
+  driveOptions() {
+    const auth = this.auth();
+    return { version: "v3", auth, timeout: 5000 };
+  }
+
+  drive() {
+    const options = this.driveOptions();
+    
+    return google.drive(options);
+  }
 }
 
-module.exports = { googleDriveService };
+
+module.exports = { GoogleDriveService: GoogleDriveService };
