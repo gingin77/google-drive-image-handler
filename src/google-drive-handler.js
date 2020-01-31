@@ -5,7 +5,11 @@ const qb = require("./query-builder"),
   dd = require("./google-drive-downloader"),
   GoogleDriveDownloader = dd.GoogleDriveDownloader,
   rh = require("./response-handler"),
-  ResponseHandler = rh.ResponseHandler;
+  ResponseHandler = rh.ResponseHandler,
+  fs = require('fs'),
+  path = require('path'),
+  os = require('os'),
+  moment = require('moment');
 
 class GoogleDriveHandler {
   /**
@@ -51,6 +55,23 @@ class GoogleDriveHandler {
 
       return listResult;
     }
+  }
+
+  async writeFileNamesToTsv() {
+    let listResult = await this.queryHandler();
+    let timestamp = moment().format("MM-DD-YYYY_HH:mm");
+    const filename = path.join("__dirname", `../results_${timestamp}.tsv`);
+    const output = [];
+
+    listResult.result.forEach(obj => {
+      const row = [];
+      row.push(obj.name);
+      row.push(obj.id);
+
+      output.push(row.join("\t"));
+    });
+
+    fs.writeFileSync(filename, output.join(os.EOL));
   }
 
   async getQueryResults() {
