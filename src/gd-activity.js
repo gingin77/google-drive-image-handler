@@ -1,25 +1,9 @@
-/** The following is a customization of the Node.js Activity API quick start
- * https://developers.google.com/drive/activity/v2/quickstart/nodejs
- * 
- * In addition to modifying the logged output, I'm customizing the query params
- * To customize the params, I've added params as a third argument passed to 
- * authorize, along with the callback function
- */ 
-
-const fs = require("fs");
-const util = require("util");
-const readline = require("readline");
-const readFilePromise = util.promisify(fs.readFile);
-const { google } = require("googleapis");
-const params = require("../google-drive-details/activity-api/params");
-const oa = require("./authClients/oauth2"),
-  GoogleDriveActivityClient = oa.GoogleDriveActivityClient;
-
-const SCOPES = ["https://www.googleapis.com/auth/drive.activity.readonly"];
-const TOKEN_PATH = "token.json";
+const gac = require("./authClients/google-activity-client"),
+  GoogleActivityClient = gac.GoogleActivityClient,
+  params = require("../google-drive-details/activity-api/params");
 
 async function getGdActivityServer() {
-  client = new GoogleDriveActivityClient();
+  let client = new GoogleActivityClient();
   let service = await client.activityService();
 
   return service;
@@ -28,7 +12,7 @@ async function getGdActivityServer() {
 /**
  * Lists activity in your Google Drive.
  *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ * @param params defines the query params used to filter activities returned
  */
 async function listDriveActivity(params) {
   const service = await getGdActivityServer()
@@ -44,8 +28,8 @@ async function listDriveActivity(params) {
       activities.forEach(activity => {
         const time = getTimeInfo(activity);
         const action = getActionInfo(activity.primaryActionDetail);
-        
         const targets = activity.targets.map(getTargetInfo);
+        
         if (action == "move") {
           const originalName = (targets[0].replace('driveItem:"',"")).replace("\"", "");
           if (activity.primaryActionDetail["move"] !== undefined) {

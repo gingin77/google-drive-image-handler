@@ -1,25 +1,20 @@
-const { google } = require("googleapis");
+const { google }  = require("googleapis"),
+  fs              = require("fs");
+  readline        = require("readline"); /* used to get new Token */
+  util            = require("util");
+  readFilePromise = util.promisify(fs.readFile);
 
-const SCOPES = ["https://www.googleapis.com/auth/drive.activity.readonly"];
-const CREDENTIALS_PATH = "credentials.json";
-const TOKEN_PATH = "token.json";
-
-const fs = require("fs");
-const util = require("util");
-const readFilePromise = util.promisify(fs.readFile);
-const readline = require("readline"); /* used to get new Token */
-
-class GoogleDriveActivityClient {
+class GoogleActivityClient {
   constructor() {
-    this.scope = SCOPES;
-    this.token_path = TOKEN_PATH;
+    this.credentials_path = "credentials.json";
+    this.scope            = ["https://www.googleapis.com/auth/drive.activity.readonly"];
+    this.token_path       = "token.json";
   }
 
   async oAuth2Auth() {
-    return readFilePromise(CREDENTIALS_PATH)
+    return readFilePromise(this.credentials_path)
       .then(data => {
-        const credentials = JSON.parse(data).installed;
-        const { client_secret, client_id, redirect_uris } = credentials;
+        const { client_secret, client_id, redirect_uris } = JSON.parse(data).installed;
 
         return new google.auth.OAuth2(
           client_id,
@@ -40,7 +35,7 @@ class GoogleDriveActivityClient {
       });
     };
 
-    let token = await readFilePromise(TOKEN_PATH)
+    let token = await readFilePromise(this.token_path)
       .then(data => data)
       .catch(err => newTokenPromise(oAuth2));
 
@@ -56,8 +51,8 @@ class GoogleDriveActivityClient {
   }
 
   async activityService() {
-    let oAuth2 = await this.oAuthWithToken();
-    let service = google.driveactivity({ version: "v2", auth: oAuth2 });
+    let oAuthWithToken = await this.oAuthWithToken();
+    let service = google.driveactivity({ version: "v2", auth: oAuthWithToken });
 
     return service;
   }
@@ -71,7 +66,7 @@ class GoogleDriveActivityClient {
   getNewToken(oAuth2Client) {
     const authUrl = oAuth2Client.generateAuthUrl({
       access_type: "offline",
-      scope: SCOPES
+      scope: this.scope
     });
     console.log("Authorize this app by visiting this url:", authUrl);
     const rl = readline.createInterface({
@@ -93,7 +88,6 @@ class GoogleDriveActivityClient {
       });
     });
   }
-  
 }
 
-module.exports = { GoogleDriveActivityClient: GoogleDriveActivityClient };
+module.exports = { GoogleActivityClient: GoogleActivityClient };
