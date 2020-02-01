@@ -4,7 +4,7 @@
   "description": "Some utilities for resizing images",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*_spec.js"
+    "test": "mocha test/**/*_spec.js --timeout 5000"
   },
   "author": "Ginnie Hench",
   "license": "ISC",
