@@ -48,11 +48,12 @@ async function authorize(callback, params) {
   );
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client,params);
-  });
+  let token = await readFilePromise(TOKEN_PATH)
+    .then(data => data)
+    .catch(err => getNewToken(oAuth2Client, callback));
+
+  oAuth2Client.setCredentials(JSON.parse(token));
+  callback(oAuth2Client, params);
 }
 
 /**
