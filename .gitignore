@@ -5,3 +5,5 @@ scratch/
 test/fixtures
 collections
 google-drive-details/
+credentials.json
+token.json
