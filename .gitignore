@@ -4,6 +4,7 @@ node_modules/
 scratch/
 test/fixtures
 collections
+tmp/
 google-drive-details/
 credentials.json
 token.json
