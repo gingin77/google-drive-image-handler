@@ -12,49 +12,26 @@ const readline = require("readline");
 const readFilePromise = util.promisify(fs.readFile);
 const { google } = require("googleapis");
 const params = require("../google-drive-details/activity-api/params");
+const oa = require("./authClients/oauth2"),
+  GoogleDriveActivityClient = oa.GoogleDriveActivityClient;
 
 const SCOPES = ["https://www.googleapis.com/auth/drive.activity.readonly"];
 const TOKEN_PATH = "token.json";
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-async function authorize(callback, params) {
-  let credentials = await readFilePromise("./credentials.json")
-    .then(data => JSON.parse(data))
-    .catch(err => console.log(err));
+async function getGdActivityServer() {
+  client = new GoogleDriveActivityClient();
+  let service = await client.activityService();
 
-  const { client_secret, client_id, redirect_uris } = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
-  );
-
-  // Check if we have previously stored a token.
-  let token = await readFilePromise(TOKEN_PATH)
-    .then(data => data)
-    .catch(err => newTokenPromise(oAuth2Client));
-
-  oAuth2Client.setCredentials(JSON.parse(token));
-  callback(oAuth2Client, params);
+  return service;
 }
 
 /**
- * Lists the recent activity in your Google Drive.
+ * Lists activity in your Google Drive.
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listDriveActivity(auth, params) {
-  // const auth = await authorize()
-  //   .then(data => data)
-  //   .catch(err => console.log(err));
-  
-  const service = google.driveactivity({ version: "v2", auth });
-
+async function listDriveActivity(params) {
+  const service = await getGdActivityServer()
 
   service.activity.query({ requestBody: params }, (err, res) => {
     if (err) return console.error("The API returned an error: " + err);
@@ -85,8 +62,6 @@ function listDriveActivity(auth, params) {
     }
   });
 }
-authorize(listDriveActivity, params);
-// listDriveActivity(params);
 
 /**
  * Returns the name of a set property in an object, or else "unknown".
@@ -165,45 +140,4 @@ function getNewParentName(activity) {
   return firstAddedParent["driveItem"]["name"];
 }
 
-const newTokenPromise = oAuth2Client => {
-  return new Promise((res, rej) => {
-    getNewToken(oAuth2Client, (data, err) => {
-      if (err) return rej(err);
-      res(data);
-    });
-  });
-};
-
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
-function getNewToken(oAuth2Client) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: "offline",
-    scope: SCOPES
-  });
-  console.log("Authorize this app by visiting this url:", authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-  rl.question("Enter the code from that page here: ", code => {
-    rl.close();
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error("Error retrieving access token", err);
-      oAuth2Client.setCredentials(token);
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
-        if (err) return console.error(err);
-        console.log("Token stored to", TOKEN_PATH);
-      });
-
-      return oAuth2Client;
-    });
-  });
-}
-
+listDriveActivity(params);
