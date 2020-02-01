@@ -7,19 +7,27 @@
  */ 
 
 const fs = require("fs");
+const util = require("util");
 const readline = require("readline");
+const readFilePromise = util.promisify(fs.readFile);
 const { google } = require("googleapis");
 const params = require("../google-drive-details/activity-api/params");
 
 const SCOPES = ["https://www.googleapis.com/auth/drive.activity.readonly"];
 const TOKEN_PATH = "token.json";
 
-// Load client secrets from a local file.
-fs.readFile("./credentials.json", (err, content) => {
-  if (err) return console.log("Error loading client secret file:", err);
+/** Define readfilePromise
+ * Follow example from https://zellwk.com/blog/converting-callbacks-to-promises/
+ */
+const readfilePromise = (...args) => {
+  return new Promise((res, rej) => {
+    fs.readFile(...args, (err, content) => {
+      if (err) return rej(err);
 
-  authorize(JSON.parse(content), listDriveActivity, params);
-});
+      res(JSON.parse(content));
+    });
+  });
+};
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -27,7 +35,11 @@ fs.readFile("./credentials.json", (err, content) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback, params) {
+async function authorize(callback, params) {
+  let credentials = await readfilePromise("./credentials.json")
+    .then(data => data)
+    .catch(err => console.log(err));
+  
   const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -81,7 +93,7 @@ function listDriveActivity(auth, params) {
     }
   });
 }
-
+authorize(listDriveActivity, params);
 
 /**
  * Returns the name of a set property in an object, or else "unknown".
