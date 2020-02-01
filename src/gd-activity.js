@@ -16,19 +16,6 @@ const params = require("../google-drive-details/activity-api/params");
 const SCOPES = ["https://www.googleapis.com/auth/drive.activity.readonly"];
 const TOKEN_PATH = "token.json";
 
-/** Define readfilePromise
- * Follow example from https://zellwk.com/blog/converting-callbacks-to-promises/
- */
-const readfilePromise = (...args) => {
-  return new Promise((res, rej) => {
-    fs.readFile(...args, (err, content) => {
-      if (err) return rej(err);
-
-      res(JSON.parse(content));
-    });
-  });
-};
-
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -36,8 +23,8 @@ const readfilePromise = (...args) => {
  * @param {function} callback The callback to call with the authorized client.
  */
 async function authorize(callback, params) {
-  let credentials = await readfilePromise("./credentials.json")
-    .then(data => data)
+  let credentials = await readFilePromise("./credentials.json")
+    .then(data => JSON.parse(data))
     .catch(err => console.log(err));
 
   const { client_secret, client_id, redirect_uris } = credentials.installed;
