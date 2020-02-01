@@ -39,7 +39,7 @@ async function authorize(callback, params) {
   let credentials = await readfilePromise("./credentials.json")
     .then(data => data)
     .catch(err => console.log(err));
-  
+
   const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -50,7 +50,7 @@ async function authorize(callback, params) {
   // Check if we have previously stored a token.
   let token = await readFilePromise(TOKEN_PATH)
     .then(data => data)
-    .catch(err => getNewToken(oAuth2Client, callback));
+    .catch(err => newTokenPromise(oAuth2Client));
 
   oAuth2Client.setCredentials(JSON.parse(token));
   callback(oAuth2Client, params);
@@ -62,6 +62,10 @@ async function authorize(callback, params) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 function listDriveActivity(auth, params) {
+  // const auth = await authorize()
+  //   .then(data => data)
+  //   .catch(err => console.log(err));
+  
   const service = google.driveactivity({ version: "v2", auth });
 
 
@@ -95,6 +99,7 @@ function listDriveActivity(auth, params) {
   });
 }
 authorize(listDriveActivity, params);
+// listDriveActivity(params);
 
 /**
  * Returns the name of a set property in an object, or else "unknown".
@@ -173,6 +178,14 @@ function getNewParentName(activity) {
   return firstAddedParent["driveItem"]["name"];
 }
 
+const newTokenPromise = oAuth2Client => {
+  return new Promise((res, rej) => {
+    getNewToken(oAuth2Client, (data, err) => {
+      if (err) return rej(err);
+      res(data);
+    });
+  });
+};
 
 
 /**
@@ -181,7 +194,7 @@ function getNewParentName(activity) {
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
-function getNewToken(oAuth2Client, callback) {
+function getNewToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES
@@ -201,7 +214,8 @@ function getNewToken(oAuth2Client, callback) {
         if (err) return console.error(err);
         console.log("Token stored to", TOKEN_PATH);
       });
-      callback(oAuth2Client);
+
+      return oAuth2Client;
     });
   });
 }
