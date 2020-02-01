@@ -1,6 +1,6 @@
 const chai = require("chai"),
   expect = chai.expect,
-  gdc = require("../../src/google-drive-client"),
+  gdc = require("../../src/authClients/google-drive-client"),
   driveClient = new gdc.GoogleDriveClient(),
   drive = driveClient.drive(),
   gdh = require("../../src/google-drive-handler"),

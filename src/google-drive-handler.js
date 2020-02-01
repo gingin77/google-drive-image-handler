@@ -132,7 +132,7 @@ module.exports = {
   GoogleDriveHandler: GoogleDriveHandler
 };
 
-const gds = require("./google-drive-client"),
+const gds = require("./authClients/google-drive-client"),
   driveClient = new gds.GoogleDriveClient(),
   drive = driveClient.drive(),
   inputArguments = require("../scratch/queryArguments"),
