@@ -2,8 +2,9 @@ const chai = require("chai"),
   expect = chai.expect,
   qb = require("../../src/query-builder"),
   QueryBuilder = qb.QueryBuilder,
-  
-{ queryArguments } = require("../fixtures/query-builder.js");
+  {
+    queryArguments
+  } = require("../../google-drive-details/test/fixtures/query-builder.js");
 
 function init(queryArguments) {
   let query = new QueryBuilder(queryArguments);

@@ -5,7 +5,10 @@ const chai = require("chai"),
   drive = driveClient.drive(),
   gdh = require("../../src/google-drive-handler"),
   GoogleDriveHandler = gdh.GoogleDriveHandler,
-  { i, o } = require("../fixtures/google-drive-handler.js");
+  {
+    i,
+    o
+  } = require("../../google-drive-details/test/fixtures/google-drive-handler.js");
 
 function getNewGoogleDriveHandler(inputArguments, drive) {
   return new GoogleDriveHandler(inputArguments, drive);

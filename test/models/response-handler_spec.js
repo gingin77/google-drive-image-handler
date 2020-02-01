@@ -5,7 +5,7 @@ const chai = require("chai"),
   {
     responseInput,
     itemCountTestResult
-  } = require("../fixtures/response-handler.js");
+  } = require("../../google-drive-details/test/fixtures/response-handler.js");
 
 function init(parent, depth, itemCount) {
   return new ResponseHandler(parent, depth, itemCount);
